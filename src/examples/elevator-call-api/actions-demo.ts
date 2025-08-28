@@ -61,6 +61,9 @@ const start = async () => {
     requestId: uuidv4(),
     // callType: 'config',
     groupId: '1',
+    payload: {
+      action: 200
+    }
   }
 
   console.log(destinationCallPayload)
