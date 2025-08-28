@@ -21,6 +21,7 @@
     "start:get-elevator-door-button-event-demo": "ts-node src/examples/operational-apis/equipment-status-api/get-elevator-door-button-event.ts",
     "start:service-info-2-restapi-demo": "ts-node src/examples/operational-apis/service-info-api/service-info-2-restapi-demo.ts",
     "start:get-escalator-event-demo": "ts-node src/examples/operational-apis/equipment-status-api/get-escalator-event-demo.ts",
+    "start:test3": "ts-node src/examples/elevator-call-api/test3",
     "build": "npm run clean && tsc -b .",
     "clean": "rimraf dist"
   },
