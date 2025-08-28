@@ -57,7 +57,7 @@ const start = async () => {
   const destinationCallPayload: any = {
     type: 'common-api',
     buildingId: targetBuildingId,
-    callType: 'action',
+    callType: 'actions',
     requestId: uuidv4(),
     // callType: 'config',
     groupId: '1',
