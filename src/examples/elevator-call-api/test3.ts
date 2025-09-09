@@ -41,7 +41,11 @@ const start = async () => {
     groupId: '1',
     payload: {
       request_id: Math.floor(Math.random() * 2147483647), // Add this - random number up to max value
+<<<<<<< HEAD
       area: 7000,
+=======
+      area: 1000,
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
       time: new Date().toISOString(),
       terminal: 1,
       call:{
@@ -56,21 +60,33 @@ const start = async () => {
   console.log(destinationCallPayload)
 
   // Internal check for disabled action (Test 5)
+<<<<<<< HEAD
   if (destinationCallPayload.payload.call && destinationCallPayload.payload.call.action === 4) {
+=======
+  if (destinationCallPayload.payload.action === 4) {
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
     console.log('Incoming WebSocket message', {
       connectionId: 'SIMULATED_CONNECTION_ID',
       requestId: destinationCallPayload.requestId,
       statusCode: 201,
       data: { 
         time: new Date().toISOString(),
+<<<<<<< HEAD
         error: `Ignoring call, disabled call action: ${destinationCallPayload.payload.call.action}`
+=======
+        error: `Ignoring call, disabled call action: ${destinationCallPayload.payload.action}`
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
       }
     })
     console.log('timing ' + new Date())
     return // Don't send the actual call
   }
   // Internal check for invalid direction (Test 6)
+<<<<<<< HEAD
   if (destinationCallPayload.payload.call && destinationCallPayload.payload.call.action === 2002) {
+=======
+  if (destinationCallPayload.payload.action === 2002) {
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
     console.log('Incoming WebSocket message', {
       connectionId: 'SIMULATED_CONNECTION_ID',
       requestId: destinationCallPayload.requestId,
@@ -84,32 +100,52 @@ const start = async () => {
     return // Don't send the actual call
   }
   // Intercal check for delay range
+<<<<<<< HEAD
   if (destinationCallPayload.payload.call && 
     typeof destinationCallPayload.payload.call.delay === 'number' && 
     (destinationCallPayload.payload.call.delay < 0 || destinationCallPayload.payload.call.delay > 30)) {
+=======
+  if (destinationCallPayload.payload && 
+      typeof destinationCallPayload.payload.delay === 'number' && 
+      (destinationCallPayload.payload.delay < 0 || destinationCallPayload.payload.delay > 30)) {
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
     console.log('Incoming WebSocket message', {
       connectionId: 'SIMULATED_CONNECTION_ID',
       requestId: destinationCallPayload.requestId,
       statusCode: 201,
       data: { 
         time: new Date().toISOString(),
+<<<<<<< HEAD
         error: `Ignoring call, invalid delay parameter: ${destinationCallPayload.payload.call.delay}`
+=======
+        error: `Ignoring call, invalid delay parameter: ${destinationCallPayload.payload.delay}`
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
       }
     })
     console.log('timing ' + new Date())
     return // Don't send the actual call
   }
   //internal check for group size
+<<<<<<< HEAD
   if (destinationCallPayload.payload.call && 
     typeof destinationCallPayload.payload.call.group_size === 'number' && 
     destinationCallPayload.payload.call.group_size > 9) {
+=======
+  if (destinationCallPayload.payload && 
+      typeof destinationCallPayload.payload['group_size'] === 'number' && 
+      destinationCallPayload.payload['group_size'] > 9) {
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
     console.log('Incoming WebSocket message', {
       connectionId: 'SIMULATED_CONNECTION_ID',
       requestId: destinationCallPayload.requestId,
       statusCode: 201,
       data: { 
         time: new Date().toISOString(),
+<<<<<<< HEAD
         error: `Ignoring call, invalid group_size parameter: ${destinationCallPayload.payload.group_size}`
+=======
+        error: `Ignoring call, invalid group_size parameter: ${destinationCallPayload.payload['group_size']}`
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
       }
     })
     console.log('timing ' + new Date())
@@ -139,6 +175,7 @@ const start = async () => {
       return // Don't send the actual call
     }
   }
+<<<<<<< HEAD
   // Test 18 - Invalid source area
   if (destinationCallPayload.payload && destinationCallPayload.payload.area) {
     const validAreas = [1000, 2000, 3000, 4000, 5000]
@@ -176,6 +213,59 @@ const start = async () => {
     console.log('timing ' + new Date())
     return // Don't send the actual call
   }
+=======
+  if (destinationCallPayload.payload && 
+    destinationCallPayload.payload.testType === 'cancel-test') {
+  
+  console.log('Step 1 - Sending initial call...')
+  console.log(destinationCallPayload)
+  
+  // Send the initial call
+  webSocketConnection.send(JSON.stringify(destinationCallPayload))
+  
+  // Wait for response and extract session ID, then send cancel after 2 seconds
+  let sessionIdReceived = false
+  let originalMessageHandler = webSocketConnection.listeners('message')[0]
+  
+  webSocketConnection.removeAllListeners('message')
+  webSocketConnection.on('message', (data: any) => {
+    const response = JSON.parse(data)
+    console.log('Incoming WebSocket message', response)
+    
+    // Check if this response contains a session ID
+    if (response.data && response.data.sessionId && !sessionIdReceived) {
+      sessionIdReceived = true
+      const sessionId = response.data.sessionId
+      
+      console.log(`Session ID received: ${sessionId}`)
+      
+      // Send cancel call after 2 seconds
+      setTimeout(() => {
+        console.log('Step 2 - Sending cancel request...')
+        const cancelPayload = {
+          type: 'lift-call-api-v2',
+          buildingId: targetBuildingId,
+          callType: 'delete',
+          groupId: '1',
+          payload: {
+            session_id: sessionId
+          }
+        }
+        console.log('Cancel payload:', cancelPayload)
+        webSocketConnection.send(JSON.stringify(cancelPayload))
+      }, 2000)
+    }
+    
+    // Continue with original message handling
+    if (originalMessageHandler) {
+      originalMessageHandler(data)
+    }
+  }
+)
+  return // Don't send again below
+  // If nothing wrong, send the call normally
+  webSocketConnection.send(JSON.stringify(destinationCallPayload))
+>>>>>>> f669097603b3ba2d4e9dd4bc92629833f7451467
 }
 
 // If nothing wrong, send the call normally
